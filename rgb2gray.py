@@ -13,30 +13,23 @@ def rgb2gray(rgb):
 imgfile = Image.open(imagePath)
 img = numpy.array(imgfile)
 
-
-# read from file
+# read from file option2, use matplotlib, but it only support png.
 #img = matplotlib.image.imread(imagePath)
 
 
 # rgb to gray
 print 'rgb matrix'
-print img
+print img # three channel for each pixel
 gray = rgb2gray(img)
 print 'gray matrix'
-print gray
+print gray # one channel for each pixel
 
-'''
 # show to figure
 matplotlib.pyplot.imshow(gray, cmap=matplotlib.pyplot.get_cmap('gray'))
 matplotlib.pyplot.show()
-'''
 
 # save to file
-#matplotlib.image.imsave('gray_'+imagePath ,gray, cmap=matplotlib.pyplot.get_cmap('gray'))
-
-# save to file
-imgfile = Image.fromarray(gray)
-imgfile.save('gray_'+imagePath, "JPEG")
+matplotlib.image.imsave('gray_'+imagePath+'.png', gray, cmap=matplotlib.pyplot.get_cmap('gray'))
 
 
 
