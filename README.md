@@ -16,3 +16,19 @@ Run Basic Script
     
     $ python live.py
     
+
+## Graphic works 
+
+RGB to Gray
+
+DWT
+
+FFT
+
+## Third-party package
+
+numpy
+
+matplotlib
+
+pywt
