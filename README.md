@@ -1,29 +1,26 @@
 # Your-Face
 Face Recognition Using OpenCV
 
-
-## How to Run
-
-Install python-opencv
-
-    $ brew install opencv
-    add "export PYTHONPATH=/usr/local/lib/python2.7/site-packages:$PYTHONPATH" to ~/.bashrc or ~/.zshrc
-    
-    
-Run Basic Script
-
     $ python static.py IMAGE_FILE
     
     $ python live.py
     
 
-## Graphic works 
+## Basic Graphic works 
 
-RGB to Gray
+### RGB to Gray
 
-DWT
+    $ python rgb2gray.py Lena.bmp
 
-FFT
+
+### DWT
+
+    $ python dwt.py lena.png dwt2
+
+### FFT
+
+    $ python fft.py lena.png
+
 
 ## Third-party package
 
@@ -32,3 +29,9 @@ numpy
 matplotlib
 
 pywt
+
+python-opencv
+ 
+    $ brew install opencv
+    add "export PYTHONPATH=/usr/local/lib/python2.7/site-packages:$PYTHONPATH" to ~/.bashrc or ~/.zshrc
+    
