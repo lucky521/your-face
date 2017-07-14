@@ -17,6 +17,8 @@ Face Recognition Using OpenCV
 
     $ python dwt.py lena.png dwt2
 
+    ![](doc/dwt.figure.png)
+
 ### FFT
 
     $ python fft.py lena.png

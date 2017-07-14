@@ -74,23 +74,23 @@ if dwt_method == "dwt":
 elif dwt_method == "dwt2":
     ax[1][0].imshow(dwt_data_cA, cmap=matplotlib.pyplot.get_cmap('gray'))
     ax[1][0].set_title("dwt_data_cA")
-    #ax[1][1].plot(dwt_data_cA)
-    #ax[1][1].set_title(str(dwt_data_cA.shape)+str(numpy.amin(dwt_data_cA))+str(numpy.amax(dwt_data_cA)))
+    ax[1][1].plot(dwt_data_cA)
+    ax[1][1].set_title(str(dwt_data_cA.shape)+str(numpy.amin(dwt_data_cA))+" "+str(numpy.amax(dwt_data_cA)))
 
     ax[2][0].imshow(dwt_data_cH, cmap=matplotlib.pyplot.get_cmap('gray'))
     ax[2][0].set_title("dwt_data_cV")
     ax[2][1].plot(dwt_data_cH)
-    ax[2][1].set_title(str(dwt_data_cH.shape)+str(numpy.amin(dwt_data_cH))+str(numpy.amax(dwt_data_cH)))
+    ax[2][1].set_title(str(dwt_data_cH.shape)+str(numpy.amin(dwt_data_cH))+" "+str(numpy.amax(dwt_data_cH)))
 
     ax[3][0].imshow(dwt_data_cD, cmap=matplotlib.pyplot.get_cmap('gray'))
     ax[3][0].set_title("dwt_data_cV")
     ax[3][1].plot(dwt_data_cD)
-    ax[3][1].set_title(str(dwt_data_cD.shape)+str(numpy.amin(dwt_data_cD))+str(numpy.amax(dwt_data_cD)))
+    ax[3][1].set_title(str(dwt_data_cD.shape)+str(numpy.amin(dwt_data_cD))+" "+str(numpy.amax(dwt_data_cD)))
 
     ax[4][0].imshow(dwt_data_cD, cmap=matplotlib.pyplot.get_cmap('gray'))
     ax[4][0].set_title("dwt_data_cD")
     ax[4][1].plot(dwt_data_cD)
-    ax[4][1].set_title(str(dwt_data_cD.shape)+str(numpy.amin(dwt_data_cD))+str(numpy.amax(dwt_data_cD)))
+    ax[4][1].set_title(str(dwt_data_cD.shape)+str(numpy.amin(dwt_data_cD))+" "+str(numpy.amax(dwt_data_cD)))
 
 #######################################################################3
 # idwt process
