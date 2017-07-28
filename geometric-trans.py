@@ -8,6 +8,8 @@ unknow_file = "1000.png"
 block_w = 256
 block_h = 256
 
+###############################################################
+# Functions that have no external dependence
 
 # draw a black line on the border of image buffer
 def draw_border(image_buffer, width, height):
@@ -31,12 +33,15 @@ def image_file_align(origin_file, block_w, block_h):
 
 	img = cv2.imread(origin_file)
 	height, width, channels = img.shape
+	print type(img[0][0][0])
 
 	# Compute aligned_width and aligned_height
 	aligned_width = ((width + block_w-1) & (~(block_w-1)))
 	aligned_height = ((height + block_h-1) & (~(block_h-1)))
 
-	new_img = numpy.zeros(shape=(aligned_width, aligned_height, channels))
+	# Create a new buffer to hold the aligned image
+	new_img = numpy.zeros(shape=(aligned_width, aligned_height, channels), dtype=numpy.uint8)
+	print type(new_img[0][0][0])
 
 	for i in range(0, width):
 		for j in range(0, height):
@@ -46,11 +51,11 @@ def image_file_align(origin_file, block_w, block_h):
 		for j in range(height, aligned_height):
 			new_img[i][j] = [0,0,0]
 
-	print new_img
+
 	return new_img, aligned_width, aligned_height
 
 
-
+###############################################################
 
 
 # Given a image file, cropping it 
@@ -70,15 +75,16 @@ def image_cropping(origin_file):
 			cv2.waitKey(0)
 
 
+
 # Given a image file, try to crop but not seperate them
 def image_draw_cropping(origin_file):
 
+	# Generate block_ size aligned image buffer
 	img, width, height = image_file_align(origin_file, block_w, block_h)
 
 	# Crop image to unit blocks
 	for i in range(0, width, block_w):
 		for j in range(0, height, block_h):
-			print i, j
 			draw_border(img[j:j+block_h, i:i+block_w], block_w, block_h)
 
 	cv2.imshow("crop", img)
@@ -87,8 +93,7 @@ def image_draw_cropping(origin_file):
 
 
 
-
-image_draw_cropping(origin_file)
+image_draw_cropping(unknow_file)
 
 
 
