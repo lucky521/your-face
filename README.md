@@ -36,4 +36,9 @@ python-opencv
  
     $ brew install opencv
     add "export PYTHONPATH=/usr/local/lib/python2.7/site-packages:$PYTHONPATH" to ~/.bashrc or ~/.zshrc
-    
+
+PIL
+
+TensorFlow
+
+Scikit-learn
