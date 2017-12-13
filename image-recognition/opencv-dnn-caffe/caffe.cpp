@@ -76,12 +76,12 @@ int main(int argc, char **argv)
         CV_TRACE_REGION("forward");
         net.setInput(inputBlob, "data");        //set the network input
         t.start();
-        prob = net.forward("prob");                          //compute output
+        prob = net.forward("prob");  //compute output: prob contain possibilites of each class
         t.stop();
     }
     int classId;
     double classProb;
-    getMaxClass(prob, &classId, &classProb);//find the best class
+    getMaxClass(prob, &classId, &classProb); //find the best class
     std::vector<String> classNames = readClassNames();
     std::cout << "Best class: #" << classId << " '" << classNames.at(classId) << "'" << std::endl;
     std::cout << "Probability: " << classProb * 100 << "%" << std::endl;
