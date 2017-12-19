@@ -1,8 +1,6 @@
 
 # python test.py --dataset "set_name" --neighbors "# of neighors"
 
-
-
 # import the necessary packages
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
@@ -15,18 +13,26 @@ import imutils
 import cv2
 import os
 
+from matplotlib import pyplot as plt
+
 def image_to_feature_vector(image, size=(128, 128)):
 	# resize the image to a fixed size, then flatten the image into
 	# a list of raw pixel intensities
 	return cv2.resize(image, size).flatten()
 
 def extract_color_histogram(image, bins=(32, 32, 32)):
+	cv2.imshow("oiginal", image)
 	# extract a 3D color histogram from the HSV color space using
 	# the supplied number of `bins` per channel
 	hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+	#cv2.imshow("after cvtColor", hsv)
+	#print hsv.shape
+
 	hist = cv2.calcHist([hsv], [0, 1, 2], None, bins,
 		[0, 180, 0, 256, 0, 256])
-
+	#print hist.shape
+	#plt.plot(hist[31])
+	#plt.show()
 	# handle normalizing the histogram if we are using OpenCV 2.4.X
 	if imutils.is_cv2():
 		hist = cv2.normalize(hist)
@@ -34,12 +40,13 @@ def extract_color_histogram(image, bins=(32, 32, 32)):
 	# otherwise, perform "in place" normalization in OpenCV 3
 	else:
 		cv2.normalize(hist, hist)
-
-	# return the flattened histogram as the feature vector
+	# return the flattened histogram as the feature 
+	#print hist.shape
+	#cv2.waitKey(0)
 	return hist.flatten()
 
 
-
+################################################################
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--dataset", required=True,
@@ -47,10 +54,12 @@ ap.add_argument("-d", "--dataset", required=True,
 ap.add_argument("-k", "--neighbors", type=int, default=1,
 	help="# of nearest neighbors for classification")
 args = vars(ap.parse_args())
+# we can use args["dataset"] and args["neighbors"]
 
-# grab the list of images that we'll be describing
+# grab the list of image files that we'll be describing
 print("[INFO] handling images...")
 imagePaths = list(paths.list_images(args["dataset"]))
+print "number of dataset is {}".format(len(imagePaths))
 
 # initialize the raw pixel intensities matrix, the features matrix,
 # and labels list
@@ -95,9 +104,11 @@ print("[INFO] features matrix: {:.2f}MB".format(
 # partition the data into training and testing splits, using 85%
 # of the data for training and the remaining 15% for testing
 (trainRI, testRI, trainRL, testRL) = train_test_split(
-	rawImages, labels, test_size=0.15, random_state=42)
+									rawImages, labels,
+									test_size=0.15, random_state=42)
 (trainFeat, testFeat, trainLabels, testLabels) = train_test_split(
-	features, labels, test_size=0.15, random_state=42)
+									features, labels,
+									test_size=0.15, random_state=42)
 
 #################################################################
 # k-NN
@@ -108,6 +119,7 @@ model.fit(trainRI, trainRL)
 acc = model.score(testRI, testRL)
 print("[INFO] k-NN classifier: k=%d" % args["neighbors"])
 print("[INFO] raw pixel accuracy: {:.2f}%".format(acc * 100))
+
 
 print("\n")
 print("[INFO] evaluating histogram accuracy...")
