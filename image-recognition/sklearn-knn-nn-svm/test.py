@@ -1,5 +1,13 @@
 
-# python test.py --dataset "set_name" --neighbors "# of neighors"
+'''
+
+Use model in sklearn to train and predict image 
+
+My target is to classify object in pictures. 
+
+# python test.py --dataset "./set_name" --neighbors "# of neighors"
+
+''' 
 
 # import the necessary packages
 from sklearn.neighbors import KNeighborsClassifier
@@ -12,9 +20,24 @@ import argparse
 import imutils
 import cv2
 import os
-
 from matplotlib import pyplot as plt
 
+####################################################################
+# construct the argument parse and parse the arguments
+ap = argparse.ArgumentParser()
+ap.add_argument("-m", "--method", required=True,
+	help="name of method")
+ap.add_argument("-d", "--dataset", required=False, default="./dataset",
+	help="path to input dataset")
+ap.add_argument("-k", "--neighbors", type=int, default=1,
+	help="# of nearest neighbors for classification")
+ap.add_argument("-i", "--input",
+	help="Input new image file to test")
+args = vars(ap.parse_args())
+# we can use args["dataset"], args["neighbors"], args["method"]
+
+####################################################################
+# How we 
 def image_to_feature_vector(image, size=(128, 128)):
 	# resize the image to a fixed size, then flatten the image into
 	# a list of raw pixel intensities
@@ -47,14 +70,6 @@ def extract_color_histogram(image, bins=(32, 32, 32)):
 
 
 ################################################################
-# construct the argument parse and parse the arguments
-ap = argparse.ArgumentParser()
-ap.add_argument("-d", "--dataset", required=True,
-	help="path to input dataset")
-ap.add_argument("-k", "--neighbors", type=int, default=1,
-	help="# of nearest neighbors for classification")
-args = vars(ap.parse_args())
-# we can use args["dataset"] and args["neighbors"]
 
 # grab the list of image files that we'll be describing
 print("[INFO] handling images...")
@@ -101,6 +116,13 @@ print("[INFO] pixels matrix: {:.2f}MB".format(
 print("[INFO] features matrix: {:.2f}MB".format(
 	features.nbytes / (1024 * 1000.0)))
 
+
+labels_set = set(labels)
+print "number of label is {}".format(len(labels_set))
+print "label list {}".format(labels_set)
+
+#################################################################
+
 # partition the data into training and testing splits, using 85%
 # of the data for training and the remaining 15% for testing
 (trainRI, testRI, trainRL, testRL) = train_test_split(
@@ -111,64 +133,108 @@ print("[INFO] features matrix: {:.2f}MB".format(
 									test_size=0.15, random_state=42)
 
 #################################################################
-# k-NN
-print("\n")
-print("[INFO] evaluating raw pixel accuracy...")
-model = KNeighborsClassifier(n_neighbors=args["neighbors"])
-model.fit(trainRI, trainRL)
-acc = model.score(testRI, testRL)
-print("[INFO] k-NN classifier: k=%d" % args["neighbors"])
-print("[INFO] raw pixel accuracy: {:.2f}%".format(acc * 100))
+
+if args["method"] == "knn":
+
+	# k-NN
+	print("Running KNN...\n")
+	print("[INFO] evaluating raw pixel accuracy...")
+	model = KNeighborsClassifier(n_neighbors=args["neighbors"])
+	model.fit(trainRI, trainRL)
+	acc = model.score(testRI, testRL)
+	print("[INFO] k-NN classifier: k=%d" % args["neighbors"])
+	print("[INFO] raw pixel accuracy: {:.2f}%".format(acc * 100))
+	
+	if args["input"] is not None:
+
+		new_image = cv2.imread(args["input"])
+		new_pixels = image_to_feature_vector(new_image)
+		print model.predict(new_pixels)
+		print model.predict_proba(new_pixels)
+		print model.classes_
+
+	print("\n")
+	print("[INFO] evaluating histogram accuracy...")
+	model = KNeighborsClassifier(n_neighbors=args["neighbors"])
+	model.fit(trainFeat, trainLabels)
+	acc = model.score(testFeat, testLabels)
+	print("[INFO] k-NN classifier: k=%d" % args["neighbors"])
+	print("[INFO] histogram accuracy: {:.2f}%".format(acc * 100))
+
+	if args["input"] is not None:
+
+		new_image = cv2.imread(args["input"])
+		new_hist = extract_color_histogram(new_image)
+		print model.predict(new_hist)
+		print model.predict_proba(new_hist)
+		print model.classes_
 
 
-print("\n")
-print("[INFO] evaluating histogram accuracy...")
-model = KNeighborsClassifier(n_neighbors=args["neighbors"])
-model.fit(trainFeat, trainLabels)
-acc = model.score(testFeat, testLabels)
-print("[INFO] k-NN classifier: k=%d" % args["neighbors"])
-print("[INFO] histogram accuracy: {:.2f}%".format(acc * 100))
+elif args["method"] == "nn":
+	#################################################################
+	#neural network
+	print("Running neural network...\n")
+	print("[INFO] evaluating raw pixel accuracy...")
+	model = MLPClassifier(hidden_layer_sizes=(50,), max_iter=1000, alpha=1e-4,
+	                      solver='sgd', tol=1e-4, random_state=1,
+	                      learning_rate_init=.1)
+	model.fit(trainRI, trainRL)
+	acc = model.score(testRI, testRL)
+	print("[INFO] neural network raw pixel accuracy: {:.2f}%".format(acc * 100))
 
-#################################################################
-#neural network
-print("\n")
-print("[INFO] evaluating raw pixel accuracy...")
-model = MLPClassifier(hidden_layer_sizes=(50,), max_iter=1000, alpha=1e-4,
-                      solver='sgd', tol=1e-4, random_state=1,
-                      learning_rate_init=.1)
-model.fit(trainRI, trainRL)
-acc = model.score(testRI, testRL)
-print("[INFO] neural network raw pixel accuracy: {:.2f}%".format(acc * 100))
+	if args["input"] is not None:
 
+		new_image = cv2.imread(args["input"])
+		new_pixels = image_to_feature_vector(new_image)
+		print model.predict(new_pixels)
+		print model.predict_proba(new_pixels)
 
-print("\n")
-print("[INFO] evaluating histogram accuracy...")
-model = MLPClassifier(hidden_layer_sizes=(50,), max_iter=1000, alpha=1e-4,
-                      solver='sgd', tol=1e-4, random_state=1,
-                      learning_rate_init=.1)
-model.fit(trainFeat, trainLabels)
-acc = model.score(testFeat, testLabels)
-print("[INFO] neural network histogram accuracy: {:.2f}%".format(acc * 100))
+	print("\n")
+	print("[INFO] evaluating histogram accuracy...")
+	model = MLPClassifier(hidden_layer_sizes=(50,), max_iter=1000, alpha=1e-4,
+	                      solver='sgd', tol=1e-4, random_state=1,
+	                      learning_rate_init=.1)
+	model.fit(trainFeat, trainLabels)
+	acc = model.score(testFeat, testLabels)
+	print("[INFO] neural network histogram accuracy: {:.2f}%".format(acc * 100))
 
-#################################################################
+	if args["input"] is not None:
 
-#SVC
-print("\n")
-print("[INFO] evaluating raw pixel accuracy...")
-model = SVC(max_iter=1000,class_weight='balanced')
-model.fit(trainRI, trainRL)
-acc = model.score(testRI, testRL)
-print("[INFO] SVM-SVC raw pixel accuracy: {:.2f}%".format(acc * 100))
+		new_image = cv2.imread(args["input"])
+		new_hist = extract_color_histogram(new_image)
+		print model.predict(new_hist)
+		print model.predict_proba(new_hist)
 
+elif args["method"] == "svm":
+	#################################################################
 
-print("\n")
-print("[INFO] evaluating histogram accuracy...")
-model = SVC(max_iter=1000,class_weight='balanced')
-model.fit(trainFeat, trainLabels)
-acc = model.score(testFeat, testLabels)
-print("[INFO] SVM-SVC histogram accuracy: {:.2f}%".format(acc * 100))
+	#SVC
+	print("Runing SVM...\n")
+	print("[INFO] evaluating raw pixel accuracy...")
+	model = SVC(max_iter=1000,class_weight='balanced')
+	model.fit(trainRI, trainRL)
+	acc = model.score(testRI, testRL)
+	print("[INFO] SVM-SVC raw pixel accuracy: {:.2f}%".format(acc * 100))
 
-#################################################################
+	if args["input"] is not None:
 
+		new_image = cv2.imread(args["input"])
+		new_pixels = image_to_feature_vector(new_image)
+		print model.predict(new_pixels)
+
+	print("\n")
+	print("[INFO] evaluating histogram accuracy...")
+	model = SVC(max_iter=1000,class_weight='balanced')
+	model.fit(trainFeat, trainLabels)
+	acc = model.score(testFeat, testLabels)
+	print("[INFO] SVM-SVC histogram accuracy: {:.2f}%".format(acc * 100))
+
+	if args["input"] is not None:
+
+		new_image = cv2.imread(args["input"])
+		new_hist = extract_color_histogram(new_image)
+		print model.predict(new_hist)
+else:
+	print(" NO method choice!")
 
 

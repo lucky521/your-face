@@ -1,3 +1,13 @@
+/*
+
+This code use a pre-trained model "bvlc_googlenet".
+
+The point is how can I train a model like it.
+
+// https://docs.opencv.org/master/d5/de7/tutorial_dnn_googlenet.html
+
+*/
+
 #include <opencv2/dnn.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
@@ -8,8 +18,6 @@ using namespace cv::dnn;
 #include <iostream>
 #include <cstdlib>
 using namespace std;
-
-// https://docs.opencv.org/master/d5/de7/tutorial_dnn_googlenet.html
 
 /* Find best class for the blob (i. e. class with maximal probability) */
 static void getMaxClass(const Mat &probBlob, int *classId, double *classProb)
