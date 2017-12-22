@@ -14,6 +14,8 @@ Please see the tutorial and website for a detailed description of how
 to use this script to perform image recognition.
 
 https://tensorflow.org/tutorials/image_recognition/
+
+https://github.com/tensorflow/models/blob/master/tutorials/image/imagenet/classify_image.py
 """
 
 from __future__ import absolute_import
