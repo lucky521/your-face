@@ -17,14 +17,11 @@
 # 
 # 2. OpenCV  http://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_setup/py_intro/py_intro.html
 
-# In[1]:
-
 
 import os
 # get_ipython().magic(u'matplotlib inline')
 import matplotlib.pyplot as plt
 import tensorflow as tf
-import pandas as pd
 import numpy as np
 from sklearn.metrics import confusion_matrix
 import time
@@ -38,8 +35,6 @@ from sklearn.utils import shuffle
 
 
 # ## Function of loading dataset
-
-# In[2]:
 
 
 def load_train(train_path, image_size, classes):
@@ -199,9 +194,6 @@ def read_test_set(test_path, image_size):
 
 # ## Configuration and Hyperparameters
 
-# In[62]:
-
-
 # Convolutional Layer 1.
 filter_size1 = 5 
 num_filters1 = 64
@@ -236,9 +228,6 @@ img_shape = (img_size, img_size)
 classes = ['Sphynx','Siamese','Ragdoll',
            'Persian','Maine_Coon','British_shorthair','Bombay','Birman','Bengal','Abyssinian']
 
-# classes = ['Sphynx','Siamese',
-#            'Persian','Maine_Coon','British_shorthair']
-
 num_classes = len(classes)
 
 # batch size
@@ -248,22 +237,17 @@ batch_size = 32
 validation_size = .2
 
 # how long to wait after validation loss stops improving before terminating training
-early_stopping = None  # use None if you don't want to implement early stoping
+early_stopping = 10 # None  # use None if you don't want to implement early stoping
 
 train_path = 'dataset'
 # test_path = 'test'
-checkpoint_dir = "ckpoint"
 
-
-# In[63]:
 
 
 # load training dataset
 data = read_train_sets(train_path, img_size, classes, validation_size=validation_size)
 # test_images, test_ids = read_test_set(test_path, img_size)
 
-
-# In[64]:
 
 
 print("Size of:")
@@ -274,8 +258,6 @@ print("- Validation:\t{}".format(len(data.valid.labels)))
 
 
 # ### Helper-function for plotting images
-
-# In[65]:
 
 
 
@@ -315,8 +297,8 @@ def plot_images(images, cls_true, cls_pred=None):
     # in a single Notebook cell.
     plt.show()
 
+    plt.close('all')
 
-# In[66]:
 
 
 # Get some random images and their labels from the train set.
@@ -324,14 +306,13 @@ def plot_images(images, cls_true, cls_pred=None):
 images, cls_true  = data.train.images, data.train.cls
 
 # Plot the images and labels using our helper-function above.
-plot_images(images=images, cls_true=cls_true)
+# plot_images(images=images, cls_true=cls_true)
 
 
+##############################################################
 # ## TensorFlow Graph
 
 # ### Helper-functions for creating new variables
-
-# In[67]:
 
 
 def new_weights(shape):
@@ -341,8 +322,6 @@ def new_biases(length):
 
 
 # ### Convolutional Layer
-
-# In[68]:
 
 
 def new_conv_layer(input,              # The previous layer.
@@ -406,8 +385,6 @@ def new_conv_layer(input,              # The previous layer.
 
 # ###  Flattening a layer
 
-# In[69]:
-
 
 def flatten_layer(layer):
     # Get the shape of the input layer.
@@ -436,8 +413,6 @@ def flatten_layer(layer):
 
 # ### Fully-Connected Layer
 
-# In[70]:
-
 
 def new_fc_layer(input,          # The previous layer.
                  num_inputs,     # Num. inputs from prev. layer.
@@ -459,9 +434,10 @@ def new_fc_layer(input,          # The previous layer.
     return layer
 
 
-# ### Placeholder variables
+###############################################################
+# Start to build the network layers
 
-# In[71]:
+# ### Placeholder variables
 
 
 x = tf.placeholder(tf.float32, shape=[None, img_size_flat], name='x')
@@ -471,8 +447,6 @@ y_true_cls = tf.argmax(y_true, dimension=1)
 
 
 # ### Convolutional Layer 1
-
-# In[72]:
 
 
 layer_conv1, weights_conv1 =     new_conv_layer(input=x_image,
@@ -484,8 +458,6 @@ layer_conv1
 
 
 # ### Convolutional Layers 2 and 3
-
-# In[73]:
 
 
 layer_conv2, weights_conv2 =     new_conv_layer(input=layer_conv1,
@@ -505,8 +477,6 @@ layer_conv2, weights_conv2 =     new_conv_layer(input=layer_conv1,
 
 # ### Flatten Layer
 
-# In[74]:
-
 
 # layer_flat, num_features = flatten_layer(layer_conv3)
 # print(layer_flat, num_features)
@@ -516,8 +486,6 @@ print(layer_flat, num_features)
 
 
 # ### Fully-Connected Layer 1
-
-# In[75]:
 
 
 layer_fc1 = new_fc_layer(input=layer_flat,
@@ -529,8 +497,6 @@ layer_fc1
 
 # ### Fully-Connected Layer 2
 
-# In[76]:
-
 
 layer_fc2 = new_fc_layer(input=layer_fc1,
                          num_inputs=fc1_size,
@@ -541,36 +507,29 @@ layer_fc2
 
 # ### Predicted Class
 
-# In[77]:
-
 
 y_pred = tf.nn.softmax(layer_fc2)
 y_pred_cls = tf.argmax(y_pred, dimension=1)
 
-
+###############################################################
 # ### Cost-function to be optimized
-
-# In[78]:
 
 
 cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits=layer_fc2,
                                                         labels=y_true)
 cost = tf.reduce_mean(cross_entropy)
+
 optimizer = tf.train.AdamOptimizer(learning_rate=1e-4).minimize(cost)
 
 
 # ### Performance Measures
 
-# In[79]:
-
 
 correct_prediction = tf.equal(y_pred_cls, y_true_cls)
 accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
-
+###############################################################
 # ## TensorFlow Run
-
-# In[80]:
 
 
 session = tf.Session()
@@ -578,19 +537,6 @@ session.run(tf.global_variables_initializer())
 
 train_batch_size = batch_size
 
-
-# In[81]:
-
-
-# def print_progress(epoch, feed_dict_train, feed_dict_validate, val_loss):
-#     # Calculate the accuracy on the training-set.
-#     acc = session.run(accuracy, feed_dict=feed_dict_train)
-#     val_acc = session.run(accuracy, feed_dict=feed_dict_validate)
-#     msg = "Epoch {0} --- Training Accuracy: {1:>6.1%}, Validation Accuracy: {2:>6.1%}, Validation Loss: {3:.3f}"
-#     print(msg.format(epoch + 1, acc, val_acc, val_loss))
-
-
-# In[82]:
 
 
 def print_progress(epoch, feed_dict_train, feed_dict_validate, val_loss):
@@ -600,8 +546,6 @@ def print_progress(epoch, feed_dict_train, feed_dict_validate, val_loss):
     msg = "Epoch {0} --- Training Accuracy: {1:>6.1%}, Validation Accuracy: {2:>6.1%}, Validation Loss: {3:.3f}"
     print(msg.format(epoch + 1, acc, val_acc, val_loss))
 
-
-# In[83]:
 
 
 # Counter for total number of iterations performed so far.
@@ -676,28 +620,34 @@ def optimize(num_iterations):
     print("Time elapsed: " + str(timedelta(seconds=int(round(time_dif)))))
 
 
-# In[84]:
-
 
 optimize(num_iterations=10000)
 
 
-# In[85]:
-
-
 x_test = data.valid.images.reshape(399, img_size_flat)
 
-feed_dict_test = {x: x_test,
-                              y_true: data.valid.labels}
+feed_dict_test = {x: x_test, y_true: data.valid.labels}
 
 val_loss = session.run(cost, feed_dict=feed_dict_test)
 
 val_acc = session.run(accuracy, feed_dict=feed_dict_test)
 
 
-# In[87]:
-
-
 msg_test = "Test Accuracy: {0:>6.1%}"
 print(msg_test.format(val_acc))
+
+###############################################################
+
+# given a new image to predict
+
+new_images = []
+new_image = cv2.imread("./new.JPG")
+new_image = cv2.resize(new_image, (img_size, img_size), interpolation = cv2.INTER_LINEAR)
+new_images.append(new_image)
+new_images = np.array(new_images)
+
+new_image_sample = {x: new_images.reshape(1, img_size_flat)}
+
+print session.run(y_pred_cls, feed_dict=new_image_sample)
+
 
