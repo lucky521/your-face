@@ -1,17 +1,16 @@
 # Your-Face
-Face Recognition Using OpenCV
 
-    $ python static.py IMAGE_FILE
-    
-    $ python live.py
-    
+这是一个有关图像处理的综合项目。
 
 ## Basic Graphic works 
 
-### RGB to Gray
+### Color Space Transform
+
+RGB to Gray
 
     $ python rgb2gray.py Lena.bmp
 
+Alpha channel
 
 ### DWT
 
@@ -22,6 +21,65 @@ Face Recognition Using OpenCV
 ### FFT
 
     $ python fft.py lena.png
+
+### Geometric Transform
+
+partitioning
+
+scaling
+
+shifting
+
+skewing
+
+### File Format Transform
+
+png, bmp, jpg
+
+### Filter
+
+noise
+
+mean filter
+
+median filter
+
+
+### Image blend
+
+blending
+
+overlap
+
+
+### Brightness
+
+brightness
+
+gama-correction
+
+
+
+
+## Image Recognition
+
+tensorflow-model
+
+caffe-model
+
+self-train-model
+
+
+## Human Face
+
+Face Recognition Using OpenCV Haar Cascades
+
+    $ python static.py IMAGE_FILE
+    
+    $ python live.py
+    
+
+
 
 
 ## Third-party package
