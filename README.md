@@ -100,3 +100,5 @@ PIL
 TensorFlow
 
 Scikit-learn
+
+scikit-image
