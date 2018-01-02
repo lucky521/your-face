@@ -4,6 +4,12 @@ OCR using svm classifier
 
 python3.
 
+opencv2 svm.
+
+The input image only contain 1 digit. (white background)
+
+> python ocr-svm.py 2.png
+
 '''
 
 import cv2 as cv
@@ -68,7 +74,7 @@ svm.save('svm_data.dat')
 
 # predict data
 deskewed = [list(map(deskew,row)) for row in test_cells]
-cv.imwrite("resized-input-11.png", deskewed[25][25])
+#cv.imwrite("resized-input-11.png", deskewed[25][25])
 hogdata = [list(map(hog,row)) for row in deskewed]
 testData = np.float32(hogdata).reshape(-1,bin_n*4)
 # predict
@@ -76,6 +82,7 @@ result = svm.predict(testData)[1]
 print(len(result))
 print(result)
 
+# print correction rate
 mask = result==responses
 correct = np.count_nonzero(mask)
 print(correct*100.0/result.size)
@@ -85,7 +92,8 @@ print(correct*100.0/result.size)
 # read a new image and resize to 50x50
 new_img = cv.imread(sys.argv[1],0)
 new_img = cv.resize(new_img, (20,20))
-cv.imwrite("resized-input.png", new_img)
+new_img = cv.bitwise_not(new_img)
+#cv.imwrite("resized-input.png", new_img)
 
 testData = []
 testData.append(hog(deskew(new_img)))
