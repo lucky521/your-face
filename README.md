@@ -2,7 +2,11 @@
 
 这是一个有关图像处理的综合项目。
 
+
+
 ## Basic Graphic works 
+
+对图像的基本操作，空间变换、几何变换、颜色变换、图像叠加。
 
 ### Color Space Transform
 
@@ -61,7 +65,30 @@ gama-correction
 
 
 
+
+
+## Image Accessment
+
+对图像的评估。
+
+### Image Quality Accessment
+
+Mean Square Error (MSE) 均方差
+
+Structure Similaruty (SSIM) 结构相似度
+
+Peak Signal To Noise Ratio (PSNR) 峰值信噪比
+
+
+	python image-iqa.py original_image new_image
+
+
+
+
+
 ## Image Recognition
+
+图像识别、分类。
 
 tensorflow-model
 
